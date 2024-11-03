@@ -1,26 +1,28 @@
 import 'dart:convert';
-
+import 'package:apiapp/model/productModel.dart';
 import 'package:http/http.dart' as http;
+
 class ApiService {
-  String baseURL = 'http://192.168.0.102/api';
-  Future  createApi(Map pData)async{
-    
-    String endURL = '/add_post';
-    String finalURL = baseURL+endURL;
+  Future<List<productsData>?> getData() async {
+    String finalURL = 'https://webhook.site/5fc9407b-309d-4923-91bc-d8206dd5c3a5';
 
-    
-    try{
-      final response = await http.post(Uri.parse(finalURL),body: pData);
-      if(response.statusCode == 200){
-        final data = jsonDecode(response.body.toString());
-        print(data);
-      }
-      else{
+    try {
+      final response = await http.get(Uri.parse(finalURL));
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        
+        // Convert each JSON object in the list to a productsData instance
+        List<productsData> products = jsonData.map((json) => productsData.fromJson(json)).toList();
+        
+        print('successful');
+        return products;
+      } else {
         print("Failed to get data");
+        return null;
       }
-    }catch(e){
+    } catch (e) {
       print(e);
+      return null;
     }
-
   }
 }
